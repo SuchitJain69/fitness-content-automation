@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Content Discovery Automation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+    }
+    
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    
+    .header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .header h1 {
+        color: #2d3748;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .tabs {
+        display: flex;
+        margin-bottom: 30px;
+        background: #f7fafc;
+        border-radius: 12px;
+        padding: 4px;
+    }
+    
+    .tab {
+        flex: 1;
+        padding: 12px 20px;
+        text-align: center;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .tab.active {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    .tab-content {
+        display: none;
+    }
+    
+    .tab-content.active {
+        display: block;
+    }
+    
+    .automation-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .automation-card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .automation-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    
+    .card-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        font-size: 20px;
+    }
+    
+    .platform-icon { background: linear-gradient(135deg, #E1306C, #F77737); }
+    .search-icon { background: linear-gradient(135deg, #4285f4, #34a853); }
+    .analytics-icon { background: linear-gradient(135deg, #ff6b6b, #feca57); }
+    
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2d3748;
+    }
+    
+    .setup-steps {
+        list-style: none;
+        margin-top: 15px;
+    }
+    
+    .setup-steps li {
+        padding: 8px 0;
+        padding-left: 20px;
+        position: relative;
+        color: #4a5568;
+    }
+    
+    .setup-steps li:before {
+        content: "→";
+        position: absolute;
+        left: 0;
+        color: #667eea;
+        font-weight: bold;
+    }
+    
+    .hook-analyzer {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-top: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .input-group {
+        margin-bottom: 20px;
+    }
+    
+    .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #2d3748;
+    }
+    
+    .input-group textarea, .input-group input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+    }
+    
+    .input-group textarea:focus, .input-group input:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+    
+    .btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    .hook-results {
+        margin-top: 20px;
+        padding: 20px;
+        background: #f7fafc;
+        border-radius: 8px;
+        display: none;
+    }
+    
+    .hook-pattern {
+        background: white;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+    }
+    
+    .content-ideas {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .idea-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+    }
+    
+    .idea-title {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 8px;
+    }
+    
+    .idea-hook {
+        font-style: italic;
+        color: #667eea;
+        margin-bottom: 10px;
+    }
+    
+    .metrics-display {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .metric-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .metric-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #667eea;
+    }
+    
+    .metric-label {
+        color: #4a5568;
+        margin-top: 8px;
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Fitness Content Discovery Automation</h1>
+            <p>Find viral fitness cinematography content and extract winning hooks</p>
+        </div>
+
+```
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab(0)">Setup Automation</div>
+        <div class="tab" onclick="switchTab(1)">Hook Analyzer</div>
+        <div class="tab" onclick="switchTab(2)">Content Ideas</div>
+        <div class="tab" onclick="switchTab(3)">Analytics</div>
+    </div>
+    
+    <!-- Tab 1: Setup Automation -->
+    <div class="tab-content active">
+        <div class="automation-grid">
+            <div class="automation-card">
+                <div class="card-header">
+                    <div class="card-icon platform-icon">📱</div>
+                    <div class="card-title">Social Media Monitoring</div>
+                </div>
+                <p>Track hashtags and accounts across platforms</p>
+                <ul class="setup-steps">
+                    <li>Connect Instagram Business API</li>
+                    <li>Set hashtag tracking: #fitnesscinematography #gymreels</li>
+                    <li>Monitor top fitness creators</li>
+                    <li>Set viral threshold (10K+ views)</li>
+                </ul>
+            </div>
+            
+            <div class="automation-card">
+                <div class="card-header">
+                    <div class="card-icon search-icon">🔍</div>
+                    <div class="card-title">Content Discovery</div>
+                </div>
+                <p>Automated search for trending content</p>
+                <ul class="setup-steps">
+                    <li>Google Alerts setup</li>
+                    <li>TikTok trending sounds tracking</li>
+                    <li>YouTube Shorts monitoring</li>
+                    <li>Cross-platform content analysis</li>
+                </ul>
+            </div>
+            
+            <div class="automation-card">
+                <div class="card-header">
+                    <div class="card-icon analytics-icon">📊</div>
+                    <div class="card-title">Hook Extraction</div>
+                </div>
+                <p>Analyze and categorize successful hooks</p>
+                <ul class="setup-steps">
+                    <li>First 3-second analysis</li>
+                    <li>Text overlay extraction</li>
+                    <li>Hook pattern recognition</li>
+                    <li>Engagement correlation</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="hook-analyzer">
+            <h3>Quick Hook Analysis</h3>
+            <div class="input-group">
+                <label>Paste Content URL or Description:</label>
+                <textarea id="contentInput" placeholder="Enter Instagram/TikTok URL or describe the content..." rows="3"></textarea>
+            </div>
+            <div class="input-group">
+                <label>View Count:</label>
+                <input type="number" id="viewCount" placeholder="Enter view count">
+            </div>
+            <button class="btn" onclick="analyzeContent()">Analyze Hook</button>
+            
+            <div class="hook-results" id="hookResults">
+                <h4>Hook Analysis Results:</h4>
+                <div id="hookOutput"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tab 2: Hook Analyzer -->
+    <div class="tab-content">
+        <div class="metrics-display">
+            <div class="metric-card">
+                <div class="metric-value">127</div>
+                <div class="metric-label">Hooks Analyzed</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">85%</div>
+                <div class="metric-label">Success Rate</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">23</div>
+                <div class="metric-label">Viral Patterns</div>
+            </div>
+        </div>
+        
+        <div class="hook-analyzer">
+            <h3>Hook Pattern Library</h3>
+            <div class="hook-pattern">
+                <strong>Transformation Hook Pattern:</strong><br>
+                Structure: "Watch this [timeframe] transformation..."<br>
+                <em>Avg Performance: 2.3M views</em>
+            </div>
+            <div class="hook-pattern">
+                <strong>Challenge Hook Pattern:</strong><br>
+                Structure: "Try this if you want [specific result]..."<br>
+                <em>Avg Performance: 1.8M views</em>
+            </div>
+            <div class="hook-pattern">
+                <strong>Mistake Hook Pattern:</strong><br>
+                Structure: "The mistake everyone makes with [exercise]..."<br>
+                <em>Avg Performance: 1.5M views</em>
+            </div>
+            <div class="hook-pattern">
+                <strong>POV Hook Pattern:</strong><br>
+                Structure: "POV: You're [fitness goal] in [timeframe]..."<br>
+                <em>Avg Performance: 2.1M views</em>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tab 3: Content Ideas -->
+    <div class="tab-content">
+        <h3>AI-Generated Content Ideas (Updated Daily)</h3>
+        <div class="content-ideas" id="contentIdeas">
+            <div class="idea-card">
+                <div class="idea-title">Gym Transformation Time-lapse</div>
+                <div class="idea-hook">"Watch this 90-day body transformation..."</div>
+                <div>Cinematic angles, dramatic lighting, progress overlay</div>
+            </div>
+            <div class="idea-card">
+                <div class="idea-title">Exercise Form Breakdown</div>
+                <div class="idea-hook">"The mistake 90% of people make with squats..."</div>
+                <div>Split-screen comparison, slow-motion analysis</div>
+            </div>
+            <div class="idea-card">
+                <div class="idea-title">Behind-the-Scenes</div>
+                <div class="idea-hook">"How I get those cinematic gym shots..."</div>
+                <div>Equipment showcase, angle reveals, lighting setup</div>
+            </div>
+            <div class="idea-card">
+                <div class="idea-title">Motivation Monday</div>
+                <div class="idea-hook">"POV: You choose discipline over comfort..."</div>
+                <div>Epic music, slow-mo lifting, inspirational text</div>
+            </div>
+            <div class="idea-card">
+                <div class="idea-title">Quick Results Challenge</div>
+                <div class="idea-hook">"Try this 30-second ab burner..."</div>
+                <div>Fast cuts, timer overlay, before/after shots</div>
+            </div>
+            <div class="idea-card">
+                <div class="idea-title">Gear Review</div>
+                <div class="idea-hook">"This $20 accessory changed everything..."</div>
+                <div>Product focus, usage demonstration, results showcase</div>
+            </div>
+        </div>
+        
+        <button class="btn" onclick="generateNewIdeas()">Generate New Ideas</button>
+    </div>
+    
+    <!-- Tab 4: Analytics -->
+    <div class="tab-content">
+        <h3>Performance Analytics</h3>
+        <div class="metrics-display">
+            <div class="metric-card">
+                <div class="metric-value">45</div>
+                <div class="metric-label">Viral Posts Found</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">12.3M</div>
+                <div class="metric-label">Avg Views</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">8.5%</div>
+                <div class="metric-label">Engagement Rate</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">67</div>
+                <div class="metric-label">Hook Templates</div>
+            </div>
+        </div>
+        
+        <div class="hook-analyzer">
+            <h4>Top Performing Hook Categories</h4>
+            <div style="display: grid; gap: 15px; margin-top: 20px;">
+                <div style="background: #f7fafc; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between;">
+                    <span>Transformation Stories</span>
+                    <span style="font-weight: bold; color: #667eea;">32% of viral content</span>
+                </div>
+                <div style="background: #f7fafc; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between;">
+                    <span>Quick Tips/Hacks</span>
+                    <span style="font-weight: bold; color: #667eea;">28% of viral content</span>
+                </div>
+                <div style="background: #f7fafc; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between;">
+                    <span>Behind-the-Scenes</span>
+                    <span style="font-weight: bold; color: #667eea;">22% of viral content</span>
+                </div>
+                <div style="background: #f7fafc; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between;">
+                    <span>Challenge Content</span>
+                    <span style="font-weight: bold; color: #667eea;">18% of viral content</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentTab = 0;
+    
+    function switchTab(tabIndex) {
+        // Hide all tab contents
+        const tabContents = document.querySelectorAll('.tab-content');
+        const tabs = document.querySelectorAll('.tab');
+        
+        tabContents.forEach(content => content.classList.remove('active'));
+        tabs.forEach(tab => tab.classList.remove('active'));
+        
+        // Show selected tab
+        tabContents[tabIndex].classList.add('active');
+        tabs[tabIndex].classList.add('active');
+        
+        currentTab = tabIndex;
+    }
+    
+    function analyzeContent() {
+        const contentInput = document.getElementById('contentInput').value;
+        const viewCount = document.getElementById('viewCount').value;
+        const hookResults = document.getElementById('hookResults');
+        const hookOutput = document.getElementById('hookOutput');
+        
+        if (!contentInput) {
+            alert('Please enter content to analyze');
+            return;
+        }
+        
+        // Simulate hook analysis
+        const hookPatterns = [
+            { type: 'Transformation', score: 85, reason: 'Shows clear before/after progression' },
+            { type: 'Question Hook', score: 72, reason: 'Engages curiosity immediately' },
+            { type: 'Challenge', score: 68, reason: 'Invites audience participation' },
+            { type: 'Tutorial', score: 91, reason: 'Promises valuable knowledge' }
+        ];
+        
+        const randomPattern = hookPatterns[Math.floor(Math.random() * hookPatterns.length)];
+        
+        hookOutput.innerHTML = `
+            <div class="hook-pattern">
+                <strong>Detected Pattern:</strong> ${randomPattern.type}<br>
+                <strong>Effectiveness Score:</strong> ${randomPattern.score}/100<br>
+                <strong>Analysis:</strong> ${randomPattern.reason}<br>
+                <strong>Estimated Reach:</strong> ${viewCount ? Math.floor(viewCount * 0.15).toLocaleString() : 'N/A'} potential views
+            </div>
+            <div style="margin-top: 15px;">
+                <strong>Improvement Suggestions:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Add emotional trigger in first 2 seconds</li>
+                    <li>Use specific numbers instead of vague terms</li>
+                    <li>Include visual text overlay for context</li>
+                </ul>
+            </div>
+        `;
+        
+        hookResults.style.display = 'block';
+    }
+    
+    function generateNewIdeas() {
+        const ideas = [
+            {
+                title: "Equipment-Free Workout",
+                hook: "No gym? No problem. This bodyweight routine...",
+                description: "Home workout with cinematic transitions"
+            },
+            {
+                title: "Nutrition Timing",
+                hook: "Eating this at this time changed my physique...",
+                description: "Food prep with aesthetic presentation"
+            },
+            {
+                title: "Form Check Friday",
+                hook: "Your deadlift is wrong. Here's why...",
+                description: "Technique correction with side-by-side comparison"
+            },
+            {
+                title: "Mindset Monday",
+                hook: "The mental shift that unlocked my gains...",
+                description: "Motivational content with powerful visuals"
+            }
+        ];
+        
+        const contentIdeasDiv = document.getElementById('contentIdeas');
+        const newIdeas = ideas.map(idea => `
+            <div class="idea-card">
+                <div class="idea-title">${idea.title}</div>
+                <div class="idea-hook">"${idea.hook}"</div>
+                <div>${idea.description}</div>
+            </div>
+        `).join('');
+        
+        contentIdeasDiv.innerHTML += newIdeas;
+    }
+    
+    // Simulate real-time updates
+    setInterval(() => {
+        const metrics = document.querySelectorAll('.metric-value');
+        metrics.forEach(metric => {
+            if (metric.textContent.includes('M')) return;
+            const currentValue = parseInt(metric.textContent);
+            if (Math.random() > 0.7) {
+                metric.textContent = (currentValue + Math.floor(Math.random() * 3)).toString();
+            }
+        });
+    }, 10000);
+</script>
+```
+
+</body>
+</html>
